@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include <cstdint>
 #include <array>
-std::array<std::uint8_t, 1000000> data;
     std::string plus_value="plus";
     std::string minus_value="minus";
     std::string outkun=".";
@@ -67,7 +66,9 @@ int main(int argc,char* argv[]){
         return -1;
     }
     int resultkun=0;
-    auto datameirei_ptr=data.begin();
+    int datakun[1000000]={0};
+    int* datameirei_ptr=nullptr;
+    datameirei_ptr=datakun;
     std::string bufstr;
     while(getline(inputstream,bufstr)){
         code_str=code_str+bufstr;
@@ -86,7 +87,7 @@ int main(int argc,char* argv[]){
                 break;
             case 2:
                 //puts("outkun . ");
-                std::cout << *datameirei_ptr << std::flush;
+                fputc(*datameirei_ptr,stdout);
                 break;
             case 3:
                 //puts("readinputkun ,");
