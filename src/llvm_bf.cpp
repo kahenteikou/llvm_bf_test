@@ -17,9 +17,38 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Module.h>
+#include <vector>
 static llvm::LLVMContext LLModuleContext;
 static llvm::IRBuilder<> IRBuilder(LLModuleContext);
 static std::unique_ptr<llvm::Module> LLMainModule;
+struct llvm_codels{
+    llvm::BasicBlock* cblock;
+    llvm::BasicBlock* bblock;
+    llvm::BasicBlock* eblock;
+};
+void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,std::vector<llvm_codels>::iterator& current_i,int indexaniki){
+    current_i->cblock=llvm::BasicBlock::Create(
+        LLModuleContext,std::string("w_c")+std::to_string(indexaniki),funcptr);
+    current_i->bblock=llvm::BasicBlock::Create(
+        LLModuleContext,std::string("w_b")+std::to_string(indexaniki),funcptr);    
+    current_i->eblock=llvm::BasicBlock::Create(
+        LLModuleContext,std::string("w_e")+std::to_string(indexaniki),funcptr);
+    IRBuilder.CreateBr(current_i->cblock);
+    IRBuilder.SetInsertPoint(current_i->cblock);
+    IRBuilder.CreateCondBr(
+        IRBuilder.CreateICmpNE(
+            IRBuilder.CreateLoad(IRBuilder.CreateLoad(ptrkun)),
+            IRBuilder.getInt8(0)
+        ),
+        current_i->bblock,
+        current_i->eblock
+    );
+    IRBuilder.SetInsertPoint(current_i->bblock);
+}
+void loopkun_end(std::vector<llvm_codels>::iterator& current_i){
+    IRBuilder.CreateBr(current_i->cblock);
+    IRBuilder.SetInsertPoint(current_i->eblock);
+}
 int check_meireikun(std::string::iterator& current,std::string& currentstr){
     if(currentstr.size() >= plus_value.size() && 
         std::equal(std::begin(plus_value),std::end(plus_value),current)){
@@ -82,8 +111,10 @@ int main(int argc,char* argv[]){
         llvm::FunctionType::get(llvm::Type::getInt32Ty(LLModuleContext),false),
         llvm::Function::ExternalLinkage,"main",LLMainModule.get()); // create main method
     IRBuilder.SetInsertPoint(llvm::BasicBlock::Create(LLModuleContext,"",llmainfunc)); // set target method
-    llvm::Value* datakun_ll=IRBuilder.CreateAlloca(IRBuilder.getInt8PtrTy(),nullptr,"datakun");
-    llvm::Value* datameirei_ptr_ll=IRBuilder.CreateAlloca(IRBuilder.getInt8PtrTy(),nullptr,"datameirei_ptr");
+    llvm::Value* datakun_ll;
+    llvm::Value* datameirei_ptr_ll;
+    datakun_ll=IRBuilder.CreateAlloca(IRBuilder.getInt8PtrTy(),nullptr,"datakun");
+    datameirei_ptr_ll=IRBuilder.CreateAlloca(IRBuilder.getInt8PtrTy(),nullptr,"datameirei_ptr");
     {
         llvm::Function* callocfunc=llvm::cast<llvm::Function>(
             LLMainModule->getOrInsertFunction("calloc",
@@ -104,6 +135,10 @@ int main(int argc,char* argv[]){
         code_str=code_str+bufstr;
     }
     current_indexkkun=code_str.begin();
+    std::vector<llvm_codels> whilevectlskun;
+    std::vector<llvm_codels>::iterator citeratorkun;
+    citeratorkun=whilevectlskun.begin();
+    int whileindexkun=0;
     while(current_indexkkun != code_str.end()){
         resultkun=check_meireikun(current_indexkkun,code_str);
         switch(resultkun){
@@ -183,6 +218,7 @@ int main(int argc,char* argv[]){
                 break;
             case 4:
                 //puts("jumps [");
+                /*
                 if(!*datameirei_ptr) {
                     
                     while(true){
@@ -193,10 +229,18 @@ int main(int argc,char* argv[]){
                             current_indexkkun=std::next(current_indexkkun);
                         }
                     }
-                }
+                }*/
+                llvm_codels llcodelsniki;
+                llcodelsniki.bblock=nullptr;
+                llcodelsniki.cblock=nullptr;
+                llcodelsniki.eblock=nullptr;
+                whilevectlskun.push_back(llcodelsniki);
+                loopkun_start(llmainfunc,datameirei_ptr_ll,citeratorkun,whileindexkun++);
+                citeratorkun=std::next(citeratorkun);
                 break;
             case 5:
                 //puts("jumpe ]");
+                /*
                 if(*datameirei_ptr){    
                     while(true){
                         if(code_str.size() >= jumps.size() && 
@@ -207,7 +251,9 @@ int main(int argc,char* argv[]){
                             current_indexkkun=std::prev(current_indexkkun);
                         }
                     }
-                }
+                }*/
+                citeratorkun=std::prev(citeratorkun);
+                loopkun_end(citeratorkun);
                 break;
             case 6:
                 //puts("ptrincr >");
