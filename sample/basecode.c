@@ -1,7 +1,16 @@
 #include <stdio.h>
+#include <stdlib.h>
 int main(){
-    int datakun[1000000]={0};
-    int* datameirei_ptr=0;
-    datameirei_ptr=datakun;
+    char* datakun=(char*)calloc(1000000,sizeof(char));
+    char* datameirei_ptr=datakun;
+    //++*datameirei_ptr;
+    *datameirei_ptr=getchar();
+    ++datameirei_ptr;
+    while(*datameirei_ptr){
+        ++datameirei_ptr;
+        --datameirei_ptr;
+        ++*datameirei_ptr;
+    }
+    free(datakun);
     return 0;
 }
