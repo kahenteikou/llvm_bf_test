@@ -26,7 +26,7 @@ struct llvm_codels{
     llvm::BasicBlock* bblock;
     llvm::BasicBlock* eblock;
 };
-void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,std::vector<llvm_codels>::iterator& current_i,int indexaniki){
+void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,llvm_codels* current_i,int indexaniki){
     current_i->cblock=llvm::BasicBlock::Create(
         LLModuleContext,std::string("w_c")+std::to_string(indexaniki),funcptr);
     current_i->bblock=llvm::BasicBlock::Create(
@@ -45,7 +45,7 @@ void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,std::vector<llvm_
     );
     IRBuilder.SetInsertPoint(current_i->bblock);
 }
-void loopkun_end(std::vector<llvm_codels>::iterator& current_i){
+void loopkun_end(llvm_codels* current_i){
     IRBuilder.CreateBr(current_i->cblock);
     IRBuilder.SetInsertPoint(current_i->eblock);
 }
@@ -135,9 +135,8 @@ int main(int argc,char* argv[]){
         code_str=code_str+bufstr;
     }
     current_indexkkun=code_str.begin();
-    std::vector<llvm_codels> whilevectlskun;
-    std::vector<llvm_codels>::iterator citeratorkun;
-    citeratorkun=whilevectlskun.begin();
+    llvm_codels code_ws[100000];
+    llvm_codels* codews_ptr=code_ws;
     int whileindexkun=0;
     while(current_indexkkun != code_str.end()){
         resultkun=check_meireikun(current_indexkkun,code_str);
@@ -230,13 +229,7 @@ int main(int argc,char* argv[]){
                         }
                     }
                 }*/
-                llvm_codels llcodelsniki;
-                llcodelsniki.bblock=nullptr;
-                llcodelsniki.cblock=nullptr;
-                llcodelsniki.eblock=nullptr;
-                whilevectlskun.push_back(llcodelsniki);
-                loopkun_start(llmainfunc,datameirei_ptr_ll,citeratorkun,whileindexkun++);
-                citeratorkun=std::next(citeratorkun);
+                loopkun_start(llmainfunc,datameirei_ptr_ll,codews_ptr++,whileindexkun++);
                 break;
             case 5:
                 //puts("jumpe ]");
@@ -252,8 +245,7 @@ int main(int argc,char* argv[]){
                         }
                     }
                 }*/
-                citeratorkun=std::prev(citeratorkun);
-                loopkun_end(citeratorkun);
+                loopkun_end(--codews_ptr);
                 break;
             case 6:
                 //puts("ptrincr >");
