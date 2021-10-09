@@ -3,12 +3,12 @@
 #include <stdio.h>
 #include <cstdint>
 #include <array>
-    std::string plus_value="plus";
-    std::string minus_value="minus";
+    std::string plus_value="+";
+    std::string minus_value="-";
     std::string outkun=".";
     std::string readinputkun=",";
-    std::string jumps="js";
-    std::string jumpe="je";
+    std::string jumps="[";
+    std::string jumpe="]";
     std::string ptrincr=">";
     std::string ptrdecr="<";
 #include <fstream>
@@ -215,13 +215,12 @@ int main(int argc,char* argv[]){
 
                 {
                     
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll);
                     IRBuilder.CreateStore(
                         IRBuilder.CreateInBoundsGEP(
                             IRBuilder.getInt8Ty(),
-                            IRBuilder.CreateLoad(pvll),
+                            IRBuilder.CreateLoad(datameirei_ptr_ll),
                             IRBuilder.getInt32(1)
-                        ),pvll
+                        ),datameirei_ptr_ll
                     );
                 }
                 break;
@@ -230,13 +229,12 @@ int main(int argc,char* argv[]){
                 //--datameirei_ptr;
                 {
                     
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll);
                     IRBuilder.CreateStore(
                         IRBuilder.CreateInBoundsGEP(
                             IRBuilder.getInt8Ty(),
-                            IRBuilder.CreateLoad(pvll),
+                            IRBuilder.CreateLoad(datameirei_ptr_ll),
                             IRBuilder.getInt32(-1)
-                        ),pvll
+                        ),datameirei_ptr_ll
                     );
                 }
                 break;
