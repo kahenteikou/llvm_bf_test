@@ -5,11 +5,11 @@
 #include <array>
 std::array<std::uint8_t, 1000000> data;
     std::string plus_value="plus";
-    std::string minus_value="-";
+    std::string minus_value="minus";
     std::string outkun=".";
     std::string readinputkun=",";
-    std::string jumps="[";
-    std::string jumpe="]";
+    std::string jumps="js";
+    std::string jumpe="je";
     std::string ptrincr=">";
     std::string ptrdecr="<";
 #include <fstream>
@@ -67,42 +67,72 @@ int main(int argc,char* argv[]){
         return -1;
     }
     int resultkun=0;
-    while(getline(inputstream,code_str)){
-        current_indexkkun=code_str.begin();
-        while(current_indexkkun != code_str.end()){
-            resultkun=check_meireikun(current_indexkkun,code_str);
-            switch(resultkun){
-                case 0:
-                    puts("plus_value +");
-                    break;
-                case 1:
-                    puts("minus_value -");
-                    break;
-                case 2:
-                    puts("outkun . ");
-                    break;
-                case 3:
-                    puts("readinputkun ,");
-                    break;
-                case 4:
-                    puts("jumps [");
-                    break;
-                case 5:
-                    puts("jumpe ]");
-                    break;
-                case 6:
-                    puts("ptrincr >");
-                    break;
-                case 7:
-                    puts("ptrdecr < ");
-                    break;
-                case 255:
-                    std::cerr << "syntax error" << std::endl;
-                    return -114;
-            }
+    auto datameirei_ptr=data.begin();
+    std::string bufstr;
+    while(getline(inputstream,bufstr)){
+        code_str=code_str+bufstr;
+    }
+    current_indexkkun=code_str.begin();
+    while(current_indexkkun != code_str.end()){
+        resultkun=check_meireikun(current_indexkkun,code_str);
+        switch(resultkun){
+            case 0:
+                //puts("plus_value +");
+                ++*datameirei_ptr;
+                break;
+            case 1:
+                //puts("minus_value -");
+                --*datameirei_ptr;
+                break;
+            case 2:
+                //puts("outkun . ");
+                std::cout << *datameirei_ptr << std::flush;
+                break;
+            case 3:
+                //puts("readinputkun ,");
+                *datameirei_ptr=getchar();
+                break;
+            case 4:
+                //puts("jumps [");
+                if(!*datameirei_ptr) {
+                    
+                    while(true){
+                        if(code_str.size() >= jumpe.size() && 
+                        std::equal(std::begin(jumpe),std::end(jumpe),current_indexkkun)){
+                            break;
+                        }else{
+                            current_indexkkun=std::next(current_indexkkun);
+                        }
+                    }
+                }
+                break;
+            case 5:
+                //puts("jumpe ]");
+                if(*datameirei_ptr){    
+                    while(true){
+                        if(code_str.size() >= jumps.size() && 
+                        std::equal(std::begin(jumps),std::end(jumps),current_indexkkun)){
+                            current_indexkkun=std::next(current_indexkkun,jumps.size());
+                            break;
+                        }else{
+                            current_indexkkun=std::prev(current_indexkkun);
+                        }
+                    }
+                }
+                break;
+            case 6:
+                //puts("ptrincr >");
+                ++datameirei_ptr;
+                break;
+            case 7:
+                //puts("ptrdecr < ");
+                --datameirei_ptr;
+                break;
+            case 255:
+                std::cerr << "syntax error" << std::endl;
+                return -114;
         }
     }
-    std::cout << "Hello" << std::endl;
     
     return 0;
 }
