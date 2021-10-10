@@ -17,6 +17,8 @@
 #include <llvm/IR/BasicBlock.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Module.h>
+#include <llvm/Support/FileSystem.h>
+#include <llvm/Bitcode/BitcodeWriter.h>
 #include <vector>
 static llvm::LLVMContext LLModuleContext;
 static llvm::IRBuilder<> IRBuilder(LLModuleContext);
@@ -103,9 +105,6 @@ int main(int argc,char* argv[]){
         return -1;
     }
     int resultkun=0;
-    //int datakun[1000000]={0};
-    ////int* datameirei_ptr=nullptr;
-    //datameirei_ptr=datakun;
     LLMainModule=std::make_unique<llvm::Module>("main",LLModuleContext); // create module (source file)
     llvm::Function *llmainfunc=llvm::Function::Create(
         llvm::FunctionType::get(llvm::Type::getInt32Ty(LLModuleContext),false),
@@ -144,10 +143,10 @@ int main(int argc,char* argv[]){
             case 0:
                 //puts("plus_value +");
                 {
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll);
+                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll->getType()->getPointerElementType(),datameirei_ptr_ll);
                     IRBuilder.CreateStore(
                         IRBuilder.CreateAdd(
-                            IRBuilder.CreateLoad(pvll),
+                            IRBuilder.CreateLoad(pvll->getType()->getPointerElementType(),pvll),
                             IRBuilder.getInt8(1)
                         ),pvll
                     );
@@ -161,10 +160,10 @@ int main(int argc,char* argv[]){
                 //--*datameirei_ptr;
                 {
                     
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll);
+                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll->getType()->getPointerElementType(),datameirei_ptr_ll);
                     IRBuilder.CreateStore(
                         IRBuilder.CreateAdd(
-                            IRBuilder.CreateLoad(pvll),
+                            IRBuilder.CreateLoad(pvll->getType()->getPointerElementType(),pvll),
                             IRBuilder.getInt8(-1)
                         ),pvll
                     );
@@ -281,20 +280,23 @@ int main(int argc,char* argv[]){
                 return -114;
         }
     }
-   {
-       llvm::Function* freefunc=llvm::cast<llvm::Function>(
-           LLMainModule->getOrInsertFunction(
-               "free",
-               IRBuilder.getVoidTy(),
-               IRBuilder.getInt8PtrTy()
-           ).getCallee()
-       );
-       IRBuilder.CreateCall(freefunc,{
-           IRBuilder.CreateLoad(datakun_ll)
-       });
-   }
-   IRBuilder.CreateRet(IRBuilder.getInt32(0));
-   LLMainModule->print(llvm::errs(),nullptr);
-    
+    {
+        llvm::Function* freefunc=llvm::cast<llvm::Function>(
+            LLMainModule->getOrInsertFunction(
+                "free",
+                IRBuilder.getVoidTy(),
+                IRBuilder.getInt8PtrTy()
+            ).getCallee()
+        );
+        IRBuilder.CreateCall(freefunc,{
+               IRBuilder.CreateLoad(datakun_ll)
+        });
+    }
+    IRBuilder.CreateRet(IRBuilder.getInt32(0));
+    std::error_code errcodekun;
+    llvm::raw_fd_ostream outstream(argv[2],errcodekun,llvm::sys::fs::OpenFlags::OF_None);
+    llvm::WriteBitcodeToFile(*LLMainModule.get(),outstream);
+    //LLMainModule->print(llvm::errs(),nullptr);
+
     return 0;
 }
