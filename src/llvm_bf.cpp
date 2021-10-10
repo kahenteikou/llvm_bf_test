@@ -103,9 +103,9 @@ int main(int argc,char* argv[]){
         return -1;
     }
     int resultkun=0;
-    int datakun[1000000]={0};
-    int* datameirei_ptr=nullptr;
-    datameirei_ptr=datakun;
+    //int datakun[1000000]={0};
+    ////int* datameirei_ptr=nullptr;
+    //datameirei_ptr=datakun;
     LLMainModule=std::make_unique<llvm::Module>("main",LLModuleContext); // create module (source file)
     llvm::Function *llmainfunc=llvm::Function::Create(
         llvm::FunctionType::get(llvm::Type::getInt32Ty(LLModuleContext),false),
