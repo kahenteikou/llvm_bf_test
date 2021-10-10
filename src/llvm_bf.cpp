@@ -47,139 +47,28 @@ int main(int argc,char* argv[]){
         resultkun=check_meireikun(current_indexkkun,code_str);
         switch(resultkun){
             case 0:
-                //puts("plus_value +");
-                {
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll->getType()->getPointerElementType(),datameirei_ptr_ll);
-                    IRBuilder.CreateStore(
-                        IRBuilder.CreateAdd(
-                            IRBuilder.CreateLoad(pvll->getType()->getPointerElementType(),pvll),
-                            IRBuilder.getInt8(1)
-                        ),pvll
-                    );
-                }
-                //++*datameirei_ptr;
-                
-
+                LL_AddValue(IRBuilder,datameirei_ptr_ll,1);
                 break;
             case 1:
-                //puts("minus_value -");
-                //--*datameirei_ptr;
-                {
-                    
-                    llvm::Value* pvll=IRBuilder.CreateLoad(datameirei_ptr_ll->getType()->getPointerElementType(),datameirei_ptr_ll);
-                    IRBuilder.CreateStore(
-                        IRBuilder.CreateAdd(
-                            IRBuilder.CreateLoad(pvll->getType()->getPointerElementType(),pvll),
-                            IRBuilder.getInt8(-1)
-                        ),pvll
-                    );
-                }
+                LL_AddValue(IRBuilder,datameirei_ptr_ll,-1);
                 break;
             case 2:
-                //puts("outkun . ");
-                //putchar(*datameirei_ptr);
-                {
-                    llvm::Function* putchar_ll=llvm::cast<llvm::Function>
-                    (
-                        LLMainModule->getOrInsertFunction(
-                            "putchar",
-                            IRBuilder.getInt32Ty(),
-                            IRBuilder.getInt32Ty()
-                        ).getCallee()
-                    );
-                    IRBuilder.CreateCall(
-                        putchar_ll,
-                        IRBuilder.CreateSExt(
-                            IRBuilder.CreateLoad(IRBuilder.CreateLoad(datameirei_ptr_ll)),
-                            IRBuilder.getInt32Ty()
-                        )
-                    );
-                }
+                LL_PUTCHAR(IRBuilder,datameirei_ptr_ll,LLMainModule);
                 break;
             case 3:
-                //puts("readinputkun ,");
-                //*datameirei_ptr=getchar();
-                {
-                    llvm::Function* getchar_ll=llvm::cast<llvm::Function>
-                    (
-                        LLMainModule->getOrInsertFunction(
-                            "getchar",
-                            IRBuilder.getInt32Ty()
-                        ).getCallee()
-                    );
-                    llvm::Value* i32kun_char=IRBuilder.CreateCall(
-                        getchar_ll
-                    );
-                    llvm::Value* current_ptr=IRBuilder.CreateLoad(datameirei_ptr_ll);
-                    IRBuilder.CreateStore(
-                        IRBuilder.CreateTrunc(
-                            i32kun_char,
-                            IRBuilder.getInt8Ty()
-                        ),
-                        current_ptr
-                    );
-                }
+                LL_GETCHAR(IRBuilder,datameirei_ptr_ll,LLMainModule);
                 break;
             case 4:
-                //puts("jumps [");
-                /*
-                if(!*datameirei_ptr) {
-                    
-                    while(true){
-                        if(code_str.size() >= jumpe.size() && 
-                        std::equal(std::begin(jumpe),std::end(jumpe),current_indexkkun)){
-                            break;
-                        }else{
-                            current_indexkkun=std::next(current_indexkkun);
-                        }
-                    }
-                }*/
                 loopkun_start(llmainfunc,datameirei_ptr_ll,codews_ptr++,whileindexkun++,LLModuleContext,IRBuilder);
                 break;
             case 5:
-                //puts("jumpe ]");
-                /*
-                if(*datameirei_ptr){    
-                    while(true){
-                        if(code_str.size() >= jumps.size() && 
-                        std::equal(std::begin(jumps),std::end(jumps),current_indexkkun)){
-                            current_indexkkun=std::next(current_indexkkun,jumps.size());
-                            break;
-                        }else{
-                            current_indexkkun=std::prev(current_indexkkun);
-                        }
-                    }
-                }*/
                 loopkun_end(--codews_ptr,IRBuilder);
                 break;
             case 6:
-                //puts("ptrincr >");
-                //++datameirei_ptr;
-
-                {
-                    
-                    IRBuilder.CreateStore(
-                        IRBuilder.CreateInBoundsGEP(
-                            IRBuilder.getInt8Ty(),
-                            IRBuilder.CreateLoad(datameirei_ptr_ll),
-                            IRBuilder.getInt32(1)
-                        ),datameirei_ptr_ll
-                    );
-                }
+                LL_AddPtr(IRBuilder,datameirei_ptr_ll,1);
                 break;
             case 7:
-                //puts("ptrdecr < ");
-                //--datameirei_ptr;
-                {
-                    
-                    IRBuilder.CreateStore(
-                        IRBuilder.CreateInBoundsGEP(
-                            IRBuilder.getInt8Ty(),
-                            IRBuilder.CreateLoad(datameirei_ptr_ll),
-                            IRBuilder.getInt32(-1)
-                        ),datameirei_ptr_ll
-                    );
-                }
+                LL_AddPtr(IRBuilder,datameirei_ptr_ll,-1);
                 break;
             case 255:
                 std::cerr << "syntax error" << std::endl;

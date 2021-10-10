@@ -21,3 +21,7 @@ struct llvm_codels{
 void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,llvm_codels* current_i,int indexaniki,llvm::LLVMContext& LLModuleContext,llvm::IRBuilder<>& IRBuilder);
 void loopkun_end(llvm_codels* current_i,llvm::IRBuilder<>& IRBuilder);
 int check_meireikun(std::string::iterator& current,std::string& currentstr);
+void LL_AddValue(llvm::IRBuilder<>& IRBuilder,llvm::Value*& datameirei_ptr_ll,int valuekun);
+void LL_AddPtr(llvm::IRBuilder<>& IRBuilder,llvm::Value*& datameirei_ptr_ll,int valuekun);
+void LL_PUTCHAR(llvm::IRBuilder<>& IRBuilder,llvm::Value*& datameirei_ptr_ll,std::unique_ptr<llvm::Module>& LLMainModule);
+void LL_GETCHAR(llvm::IRBuilder<>& IRBuilder,llvm::Value*& datameirei_ptr_ll,std::unique_ptr<llvm::Module>& LLMainModule);
