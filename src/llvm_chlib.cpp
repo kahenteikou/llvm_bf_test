@@ -1,13 +1,13 @@
 #include "base_teigi.hpp"
 
-    std::string plus_value="あなる";
-    std::string minus_value="-";
-    std::string outkun=".";
-    std::string readinputkun=",";
-    std::string jumps="[";
-    std::string jumpe="]";
-    std::string ptrincr=">";
-    std::string ptrdecr="<";
+    std::string plus_value="加算";
+    std::string minus_value="減算";
+    std::string outkun="出力";
+    std::string readinputkun="入力";
+    std::string jumps="飛行前";
+    std::string jumpe="飛行後";
+    std::string ptrincr="参照加";
+    std::string ptrdecr="参照減";
 int check_meireikun(std::string::iterator& current,std::string& currentstr){
     if(currentstr.size() >= plus_value.size() && 
         std::equal(std::begin(plus_value),std::end(plus_value),current)){
