@@ -1,6 +1,6 @@
 #include "base_teigi.hpp"
 
-    std::string plus_value="+";
+    std::string plus_value="あなる";
     std::string minus_value="-";
     std::string outkun=".";
     std::string readinputkun=",";
