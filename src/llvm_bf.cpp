@@ -1,102 +1,8 @@
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <cstdint>
-#include <array>
-    std::string plus_value="+";
-    std::string minus_value="-";
-    std::string outkun=".";
-    std::string readinputkun=",";
-    std::string jumps="[";
-    std::string jumpe="]";
-    std::string ptrincr=">";
-    std::string ptrdecr="<";
-#include <fstream>
-#include <llvm/IR/IRBuilder.h>
-#include <llvm/IR/LLVMContext.h>
-#include <llvm/IR/BasicBlock.h>
-#include <llvm/IR/Function.h>
-#include <llvm/IR/Module.h>
-#include <llvm/Support/FileSystem.h>
-#include <llvm/Bitcode/BitcodeWriter.h>
-#include <vector>
-static llvm::LLVMContext LLModuleContext;
-static llvm::IRBuilder<> IRBuilder(LLModuleContext);
-static std::unique_ptr<llvm::Module> LLMainModule;
-struct llvm_codels{
-    llvm::BasicBlock* cblock;
-    llvm::BasicBlock* bblock;
-    llvm::BasicBlock* eblock;
-};
-void loopkun_start(llvm::Function* funcptr,llvm::Value* ptrkun,llvm_codels* current_i,int indexaniki){
-    current_i->cblock=llvm::BasicBlock::Create(
-        LLModuleContext,std::string("w_c")+std::to_string(indexaniki),funcptr);
-    current_i->bblock=llvm::BasicBlock::Create(
-        LLModuleContext,std::string("w_b")+std::to_string(indexaniki),funcptr);    
-    current_i->eblock=llvm::BasicBlock::Create(
-        LLModuleContext,std::string("w_e")+std::to_string(indexaniki),funcptr);
-    IRBuilder.CreateBr(current_i->cblock);
-    IRBuilder.SetInsertPoint(current_i->cblock);
-    IRBuilder.CreateCondBr(
-        IRBuilder.CreateICmpNE(
-            IRBuilder.CreateLoad(IRBuilder.CreateLoad(ptrkun)),
-            IRBuilder.getInt8(0)
-        ),
-        current_i->bblock,
-        current_i->eblock
-    );
-    IRBuilder.SetInsertPoint(current_i->bblock);
-}
-void loopkun_end(llvm_codels* current_i){
-    IRBuilder.CreateBr(current_i->cblock);
-    IRBuilder.SetInsertPoint(current_i->eblock);
-}
-int check_meireikun(std::string::iterator& current,std::string& currentstr){
-    if(currentstr.size() >= plus_value.size() && 
-        std::equal(std::begin(plus_value),std::end(plus_value),current)){
-            current=std::next(current,plus_value.size());
-            return 0;
-        }
-    
-    if(currentstr.size() >= minus_value.size() && 
-        std::equal(std::begin(minus_value),std::end(minus_value),current)){
-            current=std::next(current,minus_value.size());
-            return 1;
-        }
-    if(currentstr.size() >= outkun.size() && 
-        std::equal(std::begin(outkun),std::end(outkun),current)){
-            current=std::next(current,outkun.size());
-            return 2;
-        }
-    if(currentstr.size() >= readinputkun.size() && 
-        std::equal(std::begin(readinputkun),std::end(readinputkun),current)){
-            current=std::next(current,readinputkun.size());
-            return 3;
-        }
-    if(currentstr.size() >= jumps.size() && 
-        std::equal(std::begin(jumps),std::end(jumps),current)){
-            current=std::next(current,jumps.size());
-            return 4;
-        }
-    if(currentstr.size() >= jumpe.size() && 
-        std::equal(std::begin(jumpe),std::end(jumpe),current)){
-            current=std::next(current,jumpe.size());
-            return 5;
-        }
-    if(currentstr.size() >= ptrincr.size() && 
-        std::equal(std::begin(ptrincr),std::end(ptrincr),current)){
-            current=std::next(current,ptrincr.size());
-            return 6;
-        }
-    if(currentstr.size() >= ptrdecr.size() && 
-        std::equal(std::begin(ptrdecr),std::end(ptrdecr),current)){
-            current=std::next(current,ptrdecr.size());
-            return 7;
-        }
-    return 255;
-}
-
+#include "base_teigi.hpp"
 int main(int argc,char* argv[]){
+    llvm::LLVMContext LLModuleContext;
+    llvm::IRBuilder<> IRBuilder(LLModuleContext);
+    std::unique_ptr<llvm::Module> LLMainModule;
     std::ifstream inputstream(argv[1]);
     std::string code_str;
     std::string::iterator current_indexkkun;
@@ -228,7 +134,7 @@ int main(int argc,char* argv[]){
                         }
                     }
                 }*/
-                loopkun_start(llmainfunc,datameirei_ptr_ll,codews_ptr++,whileindexkun++);
+                loopkun_start(llmainfunc,datameirei_ptr_ll,codews_ptr++,whileindexkun++,LLModuleContext,IRBuilder);
                 break;
             case 5:
                 //puts("jumpe ]");
@@ -244,7 +150,7 @@ int main(int argc,char* argv[]){
                         }
                     }
                 }*/
-                loopkun_end(--codews_ptr);
+                loopkun_end(--codews_ptr,IRBuilder);
                 break;
             case 6:
                 //puts("ptrincr >");
